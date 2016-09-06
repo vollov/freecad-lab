@@ -1,0 +1,68 @@
+1) Create a new empty document.
+>>> import FreeCAD
+>>> FreeCAD.open(u"/home/dike/RC/t1.fcstd")
+>>> App.setActiveDocument("t1")
+>>> App.ActiveDocument=App.getDocument("t1")
+>>> Gui.ActiveDocument=Gui.getDocument("t1")
+
+Gui.activateWorkbench("PartWorkbench")
+
+or
+doc = App.newDocument("airplane")
+
+2) Switch to Axonometric View.
+>>> Gui.activeDocument().activeView().viewAxonometric()
+
+3) Toggle axis cross ON (via View Menu).
+>>> Gui.ActiveDocument.ActiveView.setAxisCross(True)
+
+Ensure you have the Combo View showing (via View->Views).
+
+
+4) Create a cylinder by clicking on the Part Cylinder.png Cylinder button.
+>>> import Part
+>>> body = doc.addObject("Part::Feature","body1")
+>>> body1 = Part.makeCylinder(2,20)
+>>> body.Shape=body1
+>>> doc.recompute()
+
+
+Select it by clicking on Cylinder in the Project viewer.
+Click on the Data tab at the bottom of the Project viewer.
+
+5) We are now going to rotate the cylinder so that is lying along the X axis. To do this it needs to be rotated around the Y axis. The Rotation box should say 'Rotation axis with angle' so change the Axis to Y and increment the Angle until it reaches 90. Click on OK.
+
+>>> FreeCAD.getDocument("airplane").getObject("body1").Placement = App.Placement(App.Vector(0,0,0),App.Rotation(App.Vector(0,1,0),90))
+
+6) Merge
+>>> Gui.activateWorkbench("PartWorkbench")
+>>> App.activeDocument().addObject("Part::MultiFuse","Fusion")
+>>> App.activeDocument().Fusion.Shapes = [App.activeDocument().body1,App.activeDocument().elevator,]
+>>> Gui.activeDocument().body1.Visibility=False
+>>> Gui.activeDocument().elevator.Visibility=False
+>>> Gui.ActiveDocument.Fusion.ShapeColor=Gui.ActiveDocument.body1.ShapeColor
+>>> Gui.ActiveDocument.Fusion.DisplayMode=Gui.ActiveDocument.body1.DisplayMode
+>>> App.ActiveDocument.recompute()
+
+7) Rotate
+>>> Gui.activateWorkbench("DraftWorkbench")
+App.getDocument("airplane").Fusion001.Placement=App.Placement(App.Vector(0,0,0), App.Rotation(10,0,0), App.Vector(0,0,0))
+
+
+
+http://www.freecadweb.org/wiki/index.php?title=Topological_data_scripting
+
+example 1 - add a sphere
+
+import Mesh
+>>> doc=App.ActiveDocument
+>>> meshobj = doc.addObject("Mesh::Feature","MyMesh")
+>>> mymesh = Mesh.createSphere()
+>>> meshobj.Mesh = mymesh
+
+>>> import Part
+>>> myshape = Part.makeSphere(10)
+>>> shapeobj = doc.addObject("Part::Feature","MyShape")
+>>> shapeobj.Shape = myshape
+
+
